@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/appleboy/gorush/bloomfilter"
 	"github.com/appleboy/gorush/config"
 	"github.com/appleboy/gorush/core"
 	"github.com/appleboy/gorush/logx"
@@ -347,6 +348,10 @@ func main() {
 		queue.WithWorker(w),
 		queue.WithLogger(logx.QueueLogger()),
 	)
+
+	if cfg.BloomFilter.Enabled {
+		bloomfilter.InitBloomFilter(cfg)
+	}
 
 	g := graceful.NewManager(
 		graceful.WithLogger(logx.QueueLogger()),

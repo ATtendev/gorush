@@ -9,6 +9,7 @@ require (
 	github.com/appleboy/gofight/v2 v2.1.2
 	github.com/appleboy/graceful v1.1.1
 	github.com/asdine/storm/v3 v3.2.1
+	github.com/bits-and-blooms/bloom/v3 v3.7.0
 	github.com/buger/jsonparser v1.1.1
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/gin-contrib/logger v1.1.0
@@ -46,6 +47,7 @@ require (
 require (
 	github.com/aws/aws-lambda-go v1.46.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/bits-and-blooms/bitset v1.10.0 // indirect
 	github.com/bytedance/sonic v1.11.3 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect

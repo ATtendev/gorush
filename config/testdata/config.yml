@@ -107,3 +107,14 @@ stat:
     path: "level.db"
   badgerdb:
     path: "badger.db"
+
+bloomfilter:
+  engine: "redis" # support memory or redis
+  enabled: false
+  size: 128
+  hash_num: 10
+  redis:
+    cluster: false
+    addr: "localhost:6379" # if cluster is true, you may set this to "localhost:6379,localhost:6380,localhost:6381"
+    password: ""
+    db: 0

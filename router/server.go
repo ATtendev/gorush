@@ -3,12 +3,14 @@ package router
 import (
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"sync"
 
+	"github.com/appleboy/gorush/bloomfilter"
 	"github.com/appleboy/gorush/config"
 	"github.com/appleboy/gorush/core"
 	"github.com/appleboy/gorush/logx"
@@ -68,6 +70,28 @@ func pushHandler(cfg *config.ConfYaml, q *queue.Queue) gin.HandlerFunc {
 			return
 		}
 
+		if cfg.BloomFilter.Enabled {
+			rawData, err := json.Marshal(form)
+			if err != nil {
+				msg = "Can't marshal message"
+				logx.LogAccess.Debug(err)
+				abortWithError(c, http.StatusBadRequest, msg)
+				return
+			}
+			// rawData
+			logx.LogAccess.Debug(rawData)
+			if bloomfilter.Bloom.Exist(rawData) {
+				msg = "Notification already sent."
+				logx.LogAccess.Debug(msg)
+				abortWithError(c, http.StatusBadRequest, msg)
+				return
+			}
+			defer func() {
+				if err := bloomfilter.Bloom.Add(rawData); err != nil {
+					logx.LogAccess.Debug(err)
+				}
+			}()
+		}
 		if len(form.Notifications) == 0 {
 			msg = "Notifications field is empty."
 			logx.LogAccess.Debug(msg)

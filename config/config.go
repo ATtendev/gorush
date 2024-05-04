@@ -123,15 +123,16 @@ stat:
 
 // ConfYaml is config structure.
 type ConfYaml struct {
-	Core    SectionCore    `yaml:"core"`
-	API     SectionAPI     `yaml:"api"`
-	Android SectionAndroid `yaml:"android"`
-	Huawei  SectionHuawei  `yaml:"huawei"`
-	Ios     SectionIos     `yaml:"ios"`
-	Queue   SectionQueue   `yaml:"queue"`
-	Log     SectionLog     `yaml:"log"`
-	Stat    SectionStat    `yaml:"stat"`
-	GRPC    SectionGRPC    `yaml:"grpc"`
+	Core        SectionCore    `yaml:"core"`
+	API         SectionAPI     `yaml:"api"`
+	Android     SectionAndroid `yaml:"android"`
+	Huawei      SectionHuawei  `yaml:"huawei"`
+	Ios         SectionIos     `yaml:"ios"`
+	Queue       SectionQueue   `yaml:"queue"`
+	Log         SectionLog     `yaml:"log"`
+	Stat        SectionStat    `yaml:"stat"`
+	GRPC        SectionGRPC    `yaml:"grpc"`
+	BloomFilter BloomFilter    `yaml:"bloomfilter"`
 }
 
 // SectionCore is sub section of config.
@@ -299,6 +300,14 @@ type SectionGRPC struct {
 	Port    string `yaml:"port"`
 }
 
+type BloomFilter struct {
+	Engine  string       `yaml:"engine"`
+	Enabled bool         `yaml:"enabled"`
+	Size    uint         `yaml:"size"`
+	HashNum uint         `yaml:"hash_num"`
+	Redis   SectionRedis `yaml:"redis"`
+}
+
 func setDefault() {
 	viper.SetDefault("ios.max_concurrent_pushes", uint(100))
 }
@@ -436,6 +445,16 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	conf.GRPC.Enabled = viper.GetBool("grpc.enabled")
 	conf.GRPC.Port = viper.GetString("grpc.port")
 
+	// BloomFilter
+	conf.BloomFilter.Enabled = viper.GetBool("bloomfilter.enabled")
+	conf.BloomFilter.Engine = viper.GetString("bloomfilter.engine")
+	conf.BloomFilter.Size = viper.GetUint("bloomfilter.size")
+	conf.BloomFilter.HashNum = viper.GetUint("bloomfilter.hash_num")
+	conf.BloomFilter.Redis.Addr = viper.GetString("bloomfilter.redis.addr")
+	conf.BloomFilter.Redis.Password = viper.GetString("bloomfilter.redis.password")
+	conf.BloomFilter.Redis.DB = viper.GetInt("bloomfilter.redis.db")
+	conf.BloomFilter.Redis.Cluster = viper.GetBool("bloomfilter.redis.cluster")
+
 	if conf.Core.WorkerNum == int64(0) {
 		conf.Core.WorkerNum = int64(runtime.NumCPU())
 	}
@@ -443,6 +462,5 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	if conf.Core.QueueNum == int64(0) {
 		conf.Core.QueueNum = int64(8192)
 	}
-
 	return conf, nil
 }
