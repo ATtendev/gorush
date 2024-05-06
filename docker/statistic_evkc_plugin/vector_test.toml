@@ -1,0 +1,44 @@
+[sources.kafka_elasticsearch]
+type = "kafka"
+bootstrap_servers = "localhost:9092"
+group_id = "elasticsearch_db"
+topics = ["notifications"]
+
+[sources.kafka_clickhouse]
+type = "kafka"
+bootstrap_servers = "localhost:9092"
+group_id = "clickhouse_db"
+topics = ["notifications"]
+
+[transforms.modify_to_clickhouse]
+type = "remap"
+inputs = ["kafka_clickhouse"]
+source = '''
+  . = parse_json!(.message)
+'''
+
+[transforms.modify_to_elasticsearch]
+type = "remap"
+inputs = ["kafka_elasticsearch"]
+source = '''
+  .message = parse_json!(.message)
+'''
+
+[sinks.elasticsearch]
+type = "elasticsearch"
+inputs = ["modify_to_elasticsearch"]
+endpoints = ["http://localhost:9200"]
+api_version = "auto"
+compression = "none"
+doc_type = "_doc"
+id_key = "id"
+mode = "bulk"
+bulk.index = "notifications"
+
+[sinks.clickhouse]
+type = "clickhouse"
+inputs = ["modify_to_clickhouse"]
+endpoint = "http://localhost:8123"
+database = "default"
+table = "notifications"
+skip_unknown_fields = true
