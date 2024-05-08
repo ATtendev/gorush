@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/appleboy/gorush/config"
+	kafkax "github.com/appleboy/gorush/plugins/kafka"
+
 	"github.com/appleboy/gorush/core"
 	"github.com/appleboy/gorush/logx"
 
@@ -263,6 +265,20 @@ func SendNotification(
 				logx.LogError.Error(err)
 			}
 		}
+	}
+
+	if cfg.Kafka.Enabled {
+		for _, l := range resp.Logs {
+			logx.LogAccess.Info("Kafka enabled")
+			rawData, err := json.Marshal(l)
+			if err != nil {
+				logx.LogAccess.Debug(err)
+			}
+			if err := kafkax.Producer.SendMessage(rawData); err != nil {
+				logx.LogAccess.Debug(err)
+			}
+		}
+
 	}
 
 	return resp, err

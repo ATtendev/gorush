@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -133,6 +134,7 @@ type ConfYaml struct {
 	Stat        SectionStat    `yaml:"stat"`
 	GRPC        SectionGRPC    `yaml:"grpc"`
 	BloomFilter BloomFilter    `yaml:"bloomfilter"`
+	Kafka       Kafka          `yaml:"kafka"`
 }
 
 // SectionCore is sub section of config.
@@ -308,6 +310,14 @@ type BloomFilter struct {
 	Redis   SectionRedis `yaml:"redis"`
 }
 
+type Kafka struct {
+	Enabled bool          `yaml:"enabled"`
+	Network string        `yaml:"network"`
+	Address string        `yaml:"address"`
+	Topic   string        `yaml:"topic"`
+	Timeout time.Duration `yaml:"timeout"`
+}
+
 func setDefault() {
 	viper.SetDefault("ios.max_concurrent_pushes", uint(100))
 }
@@ -454,6 +464,13 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	conf.BloomFilter.Redis.Password = viper.GetString("bloomfilter.redis.password")
 	conf.BloomFilter.Redis.DB = viper.GetInt("bloomfilter.redis.db")
 	conf.BloomFilter.Redis.Cluster = viper.GetBool("bloomfilter.redis.cluster")
+
+	// Kafka producer
+	conf.Kafka.Enabled = viper.GetBool("kafka.enabled")
+	conf.Kafka.Network = viper.GetString("kafka.network")
+	conf.Kafka.Address = viper.GetString("kafka.address")
+	conf.Kafka.Timeout = time.Duration(viper.GetInt("kafka.timeout"))
+	conf.Kafka.Topic = viper.GetString("kafka.topic")
 
 	if conf.Core.WorkerNum == int64(0) {
 		conf.Core.WorkerNum = int64(runtime.NumCPU())

@@ -318,7 +318,6 @@ func handleNotification(
 					if err != nil {
 						return err
 					}
-
 					// add log
 					logs = append(logs, resp.Logs...)
 

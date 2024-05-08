@@ -17,6 +17,7 @@ import (
 	"github.com/appleboy/gorush/core"
 	"github.com/appleboy/gorush/logx"
 	"github.com/appleboy/gorush/notify"
+	kafkax "github.com/appleboy/gorush/plugins/kafka"
 	"github.com/appleboy/gorush/router"
 	"github.com/appleboy/gorush/rpc"
 	"github.com/appleboy/gorush/status"
@@ -351,6 +352,10 @@ func main() {
 
 	if cfg.BloomFilter.Enabled {
 		bloomfilter.InitBloomFilter(cfg)
+	}
+
+	if cfg.Kafka.Enabled {
+		kafkax.NewProducer(&cfg.Kafka)
 	}
 
 	g := graceful.NewManager(

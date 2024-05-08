@@ -40,3 +40,6 @@ config.yml
 dist/
 .idea
 docker/statistic_elkk_plugin/vector.toml
+config/testdata/config_dev.yml
+docker/statistic_evkc_plugin/vector_test.toml
+docker/statistic_evkc_plugin/vector.toml

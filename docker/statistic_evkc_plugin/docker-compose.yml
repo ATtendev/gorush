@@ -32,13 +32,6 @@ services:
     ports:
       - "9200:9200"
 
-  clickhouse:
-    image: clickhouse/clickhouse-server:latest
-    container_name: clickhouse
-    ports:
-      - "8123:8123"
-      - "9000:9000"
-
   vector:
     image: timberio/vector:latest-alpine
     container_name: vector

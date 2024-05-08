@@ -49,7 +49,7 @@ android:
   max_retry: 0 # resend fail notification, default value zero is disabled
 
 huawei:
-  enabled: false
+  enabled: true
   appsecret: "YOUR_APP_SECRET"
   appid: "YOUR_APP_ID"
   max_retry: 0 # resend fail notification, default value zero is disabled
@@ -118,3 +118,10 @@ bloomfilter:
     addr: "localhost:6379" # if cluster is true, you may set this to "localhost:6379,localhost:6380,localhost:6381"
     password: ""
     db: 0
+
+kafka:
+  enabled: false
+  network: "tcp"
+  address: "localhost:9092"
+  topic: "notifications"
+  time_out: 5000
